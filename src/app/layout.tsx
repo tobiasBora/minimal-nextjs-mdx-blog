@@ -27,7 +27,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="prose lg:prose-xl">
+        {/* prose is defined by tailwindcss-typography to give a default style to html,
+            I'm just lazy to properly style all the website */}
+        <div className="prose lg:prose-xl m-auto">
           {children}
         </div>
       </body>

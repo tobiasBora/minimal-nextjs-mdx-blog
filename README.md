@@ -30,6 +30,12 @@ But the main idea of the blog is quite simple and based on this official [MDX in
 - This fact is used notably in `src/app/blog/[slug]/page.tsx` to show the current blog entry, and in the function `getAllPosts` in `src/app/blog/blogUtils.ts` that uses `fs` to finds all markdown files, before importing them, notably to get the frontmatter. This function is then called in two places: `src/app/blog/page.tsx` to list all blog entries in a single page (this is just a demo, feel free to use pagination, categories etc to sort them better), and `src/app/blog/[slug]/page.tsx` in the Next.js `generateStaticParams()` function that is used to list all blog pages (needed to know which page to render when building the pages of the static blog).
 - Finally, a very rough styling is done using `tailwindcss-typography` via the class `prose lg:prose-xl` in `src/app/layout.tsx` (not recommended to style a whole website this way). You can also configure the markdown rendering in `src/mdx-components.tsx`.
 
+### Support images
+
+MDX can import images using a special `import` statement, but we would prefer to support native Markdown images like `![Image of a cat](./cat.jpg)`. To that end, we rely on `rehype-mdx-import-media`, which can simply be installed as specified in the documentation by adding it in the list of rehype plugins (warning: rehype, NOT remark!!) in `next.config.ts`, and by adding a line `img: Image` in the `mdx-components.tsx`. However, this has two issues:
+1. by default rehype removes custom html tags like `<img class="myclass" … />`, so I added a rehype (not remark!) plugin via the line `['rehype-raw', {passThrough: ['mdxjsEsm', 'mdxFlowExpression', 'mdxJsxFlowElement', 'mdxJsxTextElement', 'mdxTextExpression']}]` in `next.config.ts`
+2. `rehype-mdx-import-media` does not support changing width with `<img src="./foo.jpg" width="450"/>` with the default `img: Image` line (but you should be able to change the width with `style="width: 450px;"` instead). To support the `width=…` syntax, I modified a bit the `img` component in `mdx-components.tsx`, cf this file for comments.
+
 ## How to test this code
 
 First, install NodeJs and the dependencies of this project with:
